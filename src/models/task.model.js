@@ -12,9 +12,9 @@ const taskSchema=new Schema({
         trim:false
     },
     user:{
-        type:mongoose.Types.ObjectId,
+        type:Schema.Types.ObjectId,
         ref:"User",
-        required: "true"
+        
     }
 
 },{timestamps: true})
