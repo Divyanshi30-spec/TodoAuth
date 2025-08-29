@@ -4,27 +4,38 @@ import { User } from "../models/user.model.js";
 export const createTask = async (req, res) => {
   try {
     const { title, description } = req.body;
-    // 1. create task
-    const task = await Task.create({ title, description, user: req.user.id });
-    console.log("Task created:" , task);
 
-    // find the current user
-    const user = await User.findById(req.user.id );
-    console.log("User ID from DB:", user._id);
+    // 1. Create task and associate with user 
+    const task = await Task.create({
+      title,
+      description,
+      user: req.user.id, // user ID from JWT middleware
+    });
+    console.log("Task created:", task);
 
-       // 3. push the task._id into user's tasks array
-    await User.findByIdAndUpdate(
+    // 2. Push the task ID into the user's tasks array
+    const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
       { $push: { tasks: task._id } },
-      { new: true }
+      { new: true } // return updated user
     );
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-    res.status(201).json(task);
+    // 3. Send response
+    res.status(201).json({
+      message: "Task created successfully",
+      task,
+      user: updatedUser, // optional: you can remove this if you only want task
+    });
+
   } catch (error) {
-    console.log(error);
-    res.status(400).json(" Page not found");
+    console.error("Error creating task:", error.message);
+    res.status(500).json({ error: "Server error while creating task" });
   }
 };
+
 
 export const getAllTask = async (req, res) => {
   try {

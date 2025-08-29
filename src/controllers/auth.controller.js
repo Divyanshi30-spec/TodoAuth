@@ -21,7 +21,7 @@ export const signup = async (req, res) => {
     res.status(201).json({
       msg: "User registered successfully",
       user: {
-        id: newUser._id, // it identifies that the exact user was created and password is not secure that why we prefer id to findout user
+        id: newUser._id, // it identifies that the exact user was created and password is not secure that's why we prefer id to findout user
         userName: newUser.userName,
         email: newUser.email,
       },
